@@ -1,0 +1,23 @@
+form {
+ width: 600;
+ transform: scale(0.8);
+}
+.header{
+    font-size: 1.3rem !important;
+}
+.form-control {
+    height: 2rem !important;
+    width: 12rem !important;
+}
+.form-label {
+    font-size: 0.8rem !important;
+} 
+.label-gender{
+    font-size: 0.8rem !important;
+    left: -6.5rem !important;
+    position:relative;
+}
+
+.extension-section{
+    width: 39rem! important;
+}
