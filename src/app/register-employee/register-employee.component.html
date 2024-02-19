@@ -8,8 +8,7 @@
         <div class="row">
             <div class="col">
                 <label for="employeeId" class="form-label">Employee-Id</label>
-                <input type="number"  class="form-control" id="employeeId" 
-                 formControlName="employeeId" >
+                <input type="number"  class="form-control" id="employeeId" formControlName="employeeId" min="0" >
                 <div class="form-text text-danger" *ngIf="EmployeeId.errors?.['required'] && EmployeeId.touched ">
                     Please enter Employee-Id
                 </div>
@@ -20,10 +19,13 @@
                 <div class="form-text text-danger" *ngIf="JobTitle.errors?.['required'] && JobTitle.touched ">
                     Please enter job-title
                 </div>
+                <div class="form-text text-danger" *ngIf="JobTitle.errors?.['maxlength'] && (JobTitle.dirty || JobTitle.touched)">
+                    job-title is invalid
+                 </div>
             </div>
             <div class="col">
                 <label for="contact" class="form-label">Contact</label>
-                <input type="text" class="form-control " id="contact" formControlName="contact">
+                <input type="text" class="form-control " id="contact" formControlName="contact" min="0">
                 <div class="form-text text-danger" *ngIf="Contact.errors?.['required'] && (Contact.dirty || Contact.touched)">
                     Number is required
                 </div>

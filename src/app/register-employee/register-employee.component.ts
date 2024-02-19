@@ -1,5 +1,5 @@
-import { Component,OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, FormGroup,ValidationErrors,Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { EmployeeDetailsComponent } from '../employee-details/employee-details.component';
 
 @Component({
@@ -8,6 +8,26 @@ import { EmployeeDetailsComponent } from '../employee-details/employee-details.c
   styleUrls: ['./register-employee.component.css']
 })
 export class RegisterEmployeeComponent implements OnInit {
+
+ // Custom validator for employeeId
+  validateEmployeeId(control: AbstractControl): ValidationErrors | null {
+    // Check if the employeeId follows a specific format or pattern
+    // For example, if you want it to be alphanumeric and 6 characters long
+    if (!/^[a-zA-Z0-9]{6}$/.test(control.value)) {
+      return { invalidFormat: true };
+    }
+
+    // Check if the employeeId is unique
+    const employee1 = JSON.parse(localStorage.getItem('employees') || '[]');
+    const isDuplicate = employee1.some((employee: any) => employee.employeeId === control.value);
+    if (isDuplicate) {
+      return { uniqueEmployeeId: true };
+    }
+
+    return null;
+  }
+
+
   validateDOB(control: AbstractControl): ValidationErrors | null {
     const dob = new Date(control.value);
     const today = new Date();
@@ -34,7 +54,7 @@ export class RegisterEmployeeComponent implements OnInit {
 
     return null;
   }
-  
+
   salaryRangeValidator(control: AbstractControl) {
     const salary = parseFloat(control.value);
 
@@ -49,47 +69,41 @@ export class RegisterEmployeeComponent implements OnInit {
 
   ngOnInit(): void {
   }
-  
+
   registerForm = new FormGroup({
-    employeeId: new FormControl("",[Validators.required]),
-    contact: new FormControl("",[Validators.required,Validators.pattern("[0-9]*"),
-    Validators.minLength(10),Validators.maxLength(10)]),
-    email: new FormControl("",[Validators.required,Validators.email]),
-    gender: new FormControl("",[Validators.required]),
-    jobtitle: new FormControl("",[Validators.required]),
-    dob: new FormControl("",[Validators.required,this.validateDOB]),
-    doj: new FormControl("", [Validators.required,this.validateDateNotInFuture]),
+    employeeId: new FormControl("", [Validators.required]),
+    contact: new FormControl("", [Validators.required, Validators.pattern("[0-9]*"),
+    Validators.minLength(10), Validators.maxLength(10)]),
+    email: new FormControl("", [Validators.required, Validators.email]),
+    gender: new FormControl("", [Validators.required]),
+    jobtitle: new FormControl("", [Validators.required,Validators.maxLength(35)]),
+    dob: new FormControl("", [Validators.required, this.validateDOB]),
+    doj: new FormControl("", [Validators.required, this.validateDateNotInFuture]),
     salary: new FormControl("", [Validators.required, Validators.pattern(/^-?\d*(\.\d+)?$/), this.salaryRangeValidator]),
-    department: new FormControl("",[Validators.required]),
-    street: new FormControl("",[Validators.required]),
-    city: new FormControl("",[Validators.required]),
-    state: new FormControl("",[Validators.required]),
-    zip: new FormControl("",[Validators.required]),
-    /*job-title: new FormControl(""),
-    contact: new FormControl(""),
-    department: new FormControl(""),
-    salary: new FormControl(""),
-    hire-date: new FormControl(""),
-    dob: new FormControl(""),
-    gender: new FormControl(""),
-    email: new FormControl(""),
-    street: new FormControl(""),
-    city: new FormControl(""),
-    state: new FormControl(""),
-    postal-code: new FormControl(""),*/
+    department: new FormControl("", [Validators.required]),
+    street: new FormControl("", [Validators.required]),
+    city: new FormControl("", [Validators.required]),
+    state: new FormControl("", [Validators.required]),
+    zip: new FormControl("", [Validators.required]),
+
   })
-  /*onSubmit() {
-    this.submitted = true
 
-    if(this.registerForm.invalid){
-      return
+
+  registerSubmitted() {
+
+    if (this.registerForm.valid) {
+      const employeeData = this.registerForm.value;
+      const employees = JSON.parse(localStorage.getItem('employees') || '[]');
+      employees.push(employeeData);
+      localStorage.setItem('employees', JSON.stringify(employees));
+
+      // Optionally, you can reset the form after submission
+      this.registerForm.reset();
+
+      console.log("Employee data saved to local storage:", employeeData);
+    } else {
+      console.log("Form is invalid. Cannot submit.");
     }
-
-    alert("Success")
-  }*/
-
-  registerSubmitted(){
-    console.log(this.registerForm.get('employeeId'));
   }
 
   get EmployeeId(): FormControl {
@@ -131,5 +145,6 @@ export class RegisterEmployeeComponent implements OnInit {
   get Zip(): FormControl {
     return this.registerForm.get("zip") as FormControl;
   }
+
 }
 
