@@ -11,8 +11,6 @@ export class RegisterEmployeeComponent implements OnInit {
 
  // Custom validator for employeeId
   validateEmployeeId(control: AbstractControl): ValidationErrors | null {
-    // Check if the employeeId follows a specific format or pattern
-    // For example, if you want it to be alphanumeric and 6 characters long
     if (!/^[a-zA-Z0-9]{6}$/.test(control.value)) {
       return { invalidFormat: true };
     }
@@ -25,9 +23,9 @@ export class RegisterEmployeeComponent implements OnInit {
     }
 
     return null;
-  }
+  }                                                                                                                    
 
-
+  // Custom validator for date of birth
   validateDOB(control: AbstractControl): ValidationErrors | null {
     const dob = new Date(control.value);
     const today = new Date();
@@ -43,7 +41,8 @@ export class RegisterEmployeeComponent implements OnInit {
 
     return null;
   }
-
+  
+  // Custom validator for hire-date
   validateDateNotInFuture(control: AbstractControl): ValidationErrors | null {
     const selectedDate = new Date(control.value);
     const today = new Date();
@@ -54,7 +53,8 @@ export class RegisterEmployeeComponent implements OnInit {
 
     return null;
   }
-
+   
+  // Custom validator for salary
   salaryRangeValidator(control: AbstractControl) {
     const salary = parseFloat(control.value);
 
@@ -79,7 +79,7 @@ export class RegisterEmployeeComponent implements OnInit {
     jobtitle: new FormControl("", [Validators.required,Validators.maxLength(35)]),
     dob: new FormControl("", [Validators.required, this.validateDOB]),
     doj: new FormControl("", [Validators.required, this.validateDateNotInFuture]),
-    salary: new FormControl("", [Validators.required, Validators.pattern(/^-?\d*(\.\d+)?$/), this.salaryRangeValidator]),
+    salary: new FormControl("", [Validators.required, Validators.pattern(/^\d*(\.\d+)?$/), this.salaryRangeValidator]),
     department: new FormControl("", [Validators.required]),
     street: new FormControl("", [Validators.required]),
     city: new FormControl("", [Validators.required]),
@@ -97,7 +97,7 @@ export class RegisterEmployeeComponent implements OnInit {
       employees.push(employeeData);
       localStorage.setItem('employees', JSON.stringify(employees));
 
-      // Optionally, you can reset the form after submission
+      //reset the form after submission
       this.registerForm.reset();
 
       console.log("Employee data saved to local storage:", employeeData);
