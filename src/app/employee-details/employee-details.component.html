@@ -1,1 +1,52 @@
-<p>employee-details works!</p>
+<div class="container">
+    <div class="row">
+        <div class=" text-right">
+            <a routerLink="/register-employee" class="btn btn-sm btn-success">Add Employee</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Sr No</th>
+                        <th>Employee ID</th>
+                        <th>Job-Title</th>
+                        <th>Contact</th>
+                        <th>Department</th>
+                        <th>Salary</th>
+                        <th>DOJ</th>
+                        <th>DOB</th>
+                        <th>Gender</th>
+                        <th>Email</th>
+                        <th>City</th>
+                        <th>State</th>
+                        <th>Postal Code</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let employee of registerForm; let sr=index">
+                        <td>{{ sr+1 }}</td>
+                        <td>{{ employee.employeeId }}</td>
+                        <td>{{ employee.jobtitle}}</td>
+                        <td>{{ employee.contact }}</td>
+                        <td>{{ employee.department }}</td>
+                        <td>{{ employee.salary }}</td>
+                        <td>{{ employee.doj }}</td>
+                        <td>{{ employee.dob }}</td>
+                        <td>{{ employee.gender }}</td>
+                        <td>{{ employee.email }}</td>
+                        <td>{{ employee.city }}</td>
+                        <td>{{ employee.state }}</td>
+                        <td>{{ employee.zip }}</td>
+                        <td>  
+                            <button class="btn btn-sm btn-success" (click)="onEdit(employee.employeeId)">Edit</button>
+                            <button class="btn btn-sm btn-success" >Delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

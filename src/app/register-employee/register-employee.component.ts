@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { EmployeeDetailsComponent } from '../employee-details/employee-details.component';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-register-employee',
@@ -8,7 +9,10 @@ import { EmployeeDetailsComponent } from '../employee-details/employee-details.c
   styleUrls: ['./register-employee.component.css']
 })
 export class RegisterEmployeeComponent implements OnInit {
-
+  employeeobj: any;
+  
+  
+  
  // Custom validator for employeeId
   validateEmployeeId(control: AbstractControl): ValidationErrors | null {
     if (!/^[a-zA-Z0-9]{6}$/.test(control.value)) {
@@ -19,7 +23,7 @@ export class RegisterEmployeeComponent implements OnInit {
     const employee1 = JSON.parse(localStorage.getItem('employees') || '[]');
     const isDuplicate = employee1.some((employee: any) => employee.employeeId === control.value);
     if (isDuplicate) {
-      return { uniqueEmployeeId: true };
+      return { uniqueEmployeeId: true};
     }
 
     return null;
@@ -64,14 +68,33 @@ export class RegisterEmployeeComponent implements OnInit {
 
     return null;
   }
+  
+  currentemployeeId:number=0;
 
-  constructor() { }
+  constructor(private activateRoute: ActivatedRoute,  private router: Router,) { 
+       this.activateRoute.params.subscribe(res=>{
+       debugger;
+       if(res['employeeId']){
+        this.currentemployeeId = res['employeeId'];
+       }
+       })
+  }
 
   ngOnInit(): void {
+    const employeeData = localStorage.getItem("employees")
+  /*if(employeeData != null) {
+    this.registerForm = JSON.parse(employeeData);
+    if(this.currentemployeeId!==0) {
+    const currentRecord = this.registerForm.find((m: { employeeId: number; })=> m.employeeId ==this.currentemployeeId);
+    if(currentRecord != undefined){
+      this.employeeobj = currentRecord;
+    }
+    }
+  }*/
   }
 
   registerForm = new FormGroup({
-    employeeId: new FormControl("", [Validators.required]),
+    employeeId: new FormControl("", [Validators.required,this.validateEmployeeId]),
     contact: new FormControl("", [Validators.required, Validators.pattern("[0-9]*"),
     Validators.minLength(10), Validators.maxLength(10)]),
     email: new FormControl("", [Validators.required, Validators.email]),
@@ -101,6 +124,7 @@ export class RegisterEmployeeComponent implements OnInit {
       this.registerForm.reset();
 
       console.log("Employee data saved to local storage:", employeeData);
+      this.router.navigate(['/employee-details'])
     } else {
       console.log("Form is invalid. Cannot submit.");
     }

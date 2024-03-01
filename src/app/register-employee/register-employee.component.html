@@ -12,6 +12,12 @@
                 <div class="form-text text-danger" *ngIf="EmployeeId.errors?.['required'] && EmployeeId.touched ">
                     Please enter Employee-Id
                 </div>
+                <div class="form-text text-danger" *ngIf="EmployeeId?.hasError('uniqueEmployeeId')">
+                    Employee-Id should be unique.
+                </div>
+                <div class="form-text text-danger" *ngIf="EmployeeId.errors?.['invalidFormat'] && (EmployeeId.dirty || EmployeeId.touched)">
+                    invalid format.
+                </div>
             </div>
             <div class="col">
                 <label for="jobtitle" class="form-label">Job-Title</label>
@@ -79,7 +85,7 @@
         </div>
         <div class="row">
             <div class="col">
-                <label for="dob" class="form-label">Date of Birth:</label>
+                <label for="dob" class="form-label">Date of Birth</label>
                 <input type="date" id="dob" formControlName="dob" class="form-control ">
                 <div class="form-text text-danger" *ngIf="Dob.errors?.['required'] && (Dob.dirty || Dob.touched)">
                     Date of Birth is required

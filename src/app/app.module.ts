@@ -8,11 +8,15 @@ import { EmployeeDetailsComponent } from './employee-details/employee-details.co
 import { ReactiveFormsModule } from '@angular/forms';
 
 
+
+
 @NgModule({
   declarations: [
     AppComponent,
     RegisterEmployeeComponent,
-    EmployeeDetailsComponent
+    EmployeeDetailsComponent,
+  
+ 
   ],
   imports: [
     BrowserModule,
