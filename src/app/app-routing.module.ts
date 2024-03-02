@@ -12,11 +12,11 @@ const routes: Routes = [
   },
   {
     component:RegisterEmployeeComponent,
-    path:'register-employee/:id',
+    path:'register-employee',
   },
   {
     component:RegisterEmployeeComponent,
-    path:'register-employee',
+    path:'register-employee/:id',
   },
   {
     component:EmployeeDetailsComponent,

@@ -7,25 +7,25 @@ import { Router } from '@angular/router';
   styleUrls: ['./employee-details.component.css']
 })
 export class EmployeeDetailsComponent {
-registerForm: any[]=[];
 
+employeeArray: any[] = [];
 constructor (private router: Router){
 
 }
 ngOnInit(): void {
-  const employeeData = localStorage.getItem("employees")
-  if(employeeData != null) {
-    this.registerForm = JSON.parse(employeeData);
-  }
+  const employeeData = localStorage.getItem("employees");
+    if (employeeData != null) {
+      this.employeeArray = JSON.parse(employeeData);
+    }
 }
-onEdit(employeeId:number) {
-  const employeeData = this.getEmployeeDataById(employeeId);
-  this.router.navigate(['/register-employee',employeeId]);
-  
+onEdit(id:number) {
+  this.router.navigate(['register-employee',id]);
 }
-getEmployeeDataById(employeeId: number): any {
-  const employees = JSON.parse(localStorage.getItem('employees') || '[]');
-  return employees.find((employee: any) => employee.employeeId === employeeId);
+onDelete(id: number) {
+  debugger;
+  const index = this.employeeArray.findIndex(m => m.id == id);
+  this.employeeArray.splice(index, 1);
+  localStorage.setItem('employees', JSON.stringify(this.employeeArray));
 }
 
 

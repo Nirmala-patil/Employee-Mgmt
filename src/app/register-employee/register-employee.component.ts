@@ -66,17 +66,49 @@ export class RegisterEmployeeComponent implements OnInit {
     return null;
   }
   
-  currentemployeeId:number=0;
+  employeeObj: any ={
+    id:0,
+    employeeId:'',
+    contact:'',
+    email:'',
+    gender:'',
+    jobtitle:'',
+    dob:'',
+    doj:'',
+    salary:'',
+    department:'',
+    street:'',
+    city:'',
+    state:'',
+    zip:'',
+  }
 
-  constructor(private activateRoute: ActivatedRoute,  private router: Router, ) { 
-    this.activateRoute.params.subscribe(res=>{
+  employeeArray: any[]=[];
+  currentId: number =0;
+
+
+  constructor(private activatedRoute: ActivatedRoute, public router: Router, ) {
+    this.activatedRoute.params.subscribe(res=>{
       debugger;
-      
+      if(res['id']){
+        this.currentId = res['id'];
+      }
     })
   }
   ngOnInit(): void {
-    throw new Error('Method not implemented.');
+    const employeeData = localStorage.getItem('employees')
+    if(employeeData !== null){
+      this.employeeArray = JSON.parse(employeeData);
+      debugger;
+      if(this.currentId !==0){
+      const currentRecord = this.employeeArray.find(m=> m.id ==this.currentId);
+      if(currentRecord != undefined){
+      this.employeeObj = currentRecord;
+     }
+    }
+   }
   }
+
 
   registerForm = new FormGroup({
     employeeId: new FormControl("", [Validators.required,this.validateEmployeeId]),
@@ -97,7 +129,7 @@ export class RegisterEmployeeComponent implements OnInit {
   })
 
 
-  registerSubmitted() {
+  /*registerSubmitted() {
 
     if (this.registerForm.valid) {
       const employeeData = this.registerForm.value;
@@ -113,7 +145,20 @@ export class RegisterEmployeeComponent implements OnInit {
     } else {
       console.log("Form is invalid. Cannot submit.");
     }
-  }
+  }*/
+  submit() {
+    const employeeData = localStorage.getItem('employees')
+    if(employeeData == null){
+      this.employeeArray.push(this.employeeObj);
+      localStorage.setItem('employees', JSON.stringify(this.employeeArray));
+    }else{//if data present
+      const parseData = JSON.parse(employeeData);
+      this.employeeObj.id = parseData.length +1;
+      this.employeeArray.push(this.employeeObj);
+      localStorage.setItem('employees', JSON.stringify(this.employeeArray));
+      this.router.navigate(['/employee-details'])
+    }
+   }
 
   get EmployeeId(): FormControl {
     return this.registerForm.get("employeeId") as FormControl;
@@ -157,7 +202,5 @@ export class RegisterEmployeeComponent implements OnInit {
 
 }
 
-function ngOnInit() {
-  throw new Error('Function not implemented.');
-}
+
 
