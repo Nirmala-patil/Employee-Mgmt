@@ -9,9 +9,6 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['./register-employee.component.css']
 })
 export class RegisterEmployeeComponent implements OnInit {
-  employeeobj: any;
-  
-  
   
  // Custom validator for employeeId
   validateEmployeeId(control: AbstractControl): ValidationErrors | null {
@@ -64,33 +61,21 @@ export class RegisterEmployeeComponent implements OnInit {
 
     if (isNaN(salary) || salary < 10000 || salary > 100000) {
       return { salaryRange: true };
-    }
+    } 
 
     return null;
   }
   
   currentemployeeId:number=0;
 
-  constructor(private activateRoute: ActivatedRoute,  private router: Router,) { 
-       this.activateRoute.params.subscribe(res=>{
-       debugger;
-       if(res['employeeId']){
-        this.currentemployeeId = res['employeeId'];
-       }
-       })
+  constructor(private activateRoute: ActivatedRoute,  private router: Router, ) { 
+    this.activateRoute.params.subscribe(res=>{
+      debugger;
+      
+    })
   }
-
   ngOnInit(): void {
-    const employeeData = localStorage.getItem("employees")
-  /*if(employeeData != null) {
-    this.registerForm = JSON.parse(employeeData);
-    if(this.currentemployeeId!==0) {
-    const currentRecord = this.registerForm.find((m: { employeeId: number; })=> m.employeeId ==this.currentemployeeId);
-    if(currentRecord != undefined){
-      this.employeeobj = currentRecord;
-    }
-    }
-  }*/
+    throw new Error('Method not implemented.');
   }
 
   registerForm = new FormGroup({
@@ -170,5 +155,9 @@ export class RegisterEmployeeComponent implements OnInit {
     return this.registerForm.get("zip") as FormControl;
   }
 
+}
+
+function ngOnInit() {
+  throw new Error('Function not implemented.');
 }
 

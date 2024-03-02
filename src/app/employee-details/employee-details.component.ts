@@ -19,6 +19,14 @@ ngOnInit(): void {
   }
 }
 onEdit(employeeId:number) {
+  const employeeData = this.getEmployeeDataById(employeeId);
   this.router.navigate(['/register-employee',employeeId]);
+  
 }
+getEmployeeDataById(employeeId: number): any {
+  const employees = JSON.parse(localStorage.getItem('employees') || '[]');
+  return employees.find((employee: any) => employee.employeeId === employeeId);
+}
+
+
 }
