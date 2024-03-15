@@ -1,6 +1,11 @@
 .container{
     height: 100vh;
+    width:100% ;
+    margin: 0 !important;
     display: flex;
     justify-content: left;
     align-items: left;
+}
+.body{
+    overflow-x: hidden !important;
 }

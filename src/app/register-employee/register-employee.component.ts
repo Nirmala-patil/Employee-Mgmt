@@ -9,8 +9,8 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['./register-employee.component.css']
 })
 export class RegisterEmployeeComponent implements OnInit {
-  
- // Custom validator for employeeId
+
+  // Custom validator for employeeId
   validateEmployeeId(control: AbstractControl): ValidationErrors | null {
     if (!/^[a-zA-Z0-9]{6}$/.test(control.value)) {
       return { invalidFormat: true };
@@ -20,11 +20,11 @@ export class RegisterEmployeeComponent implements OnInit {
     const employee1 = JSON.parse(localStorage.getItem('employees') || '[]');
     const isDuplicate = employee1.some((employee: any) => employee.employeeId === control.value);
     if (isDuplicate) {
-      return { uniqueEmployeeId: true};
+      return { uniqueEmployeeId: true };
     }
 
     return null;
-  }                                                                                                                    
+  }
 
   // Custom validator for date of birth
   validateDOB(control: AbstractControl): ValidationErrors | null {
@@ -42,7 +42,7 @@ export class RegisterEmployeeComponent implements OnInit {
 
     return null;
   }
-  
+
   // Custom validator for hire-date
   validateDateNotInFuture(control: AbstractControl): ValidationErrors | null {
     const selectedDate = new Date(control.value);
@@ -54,69 +54,66 @@ export class RegisterEmployeeComponent implements OnInit {
 
     return null;
   }
-   
+
   // Custom validator for salary
   salaryRangeValidator(control: AbstractControl) {
     const salary = parseFloat(control.value);
 
     if (isNaN(salary) || salary < 10000 || salary > 100000) {
       return { salaryRange: true };
-    } 
+    }
 
     return null;
   }
-  
-  employeeObj: any ={
-    id:0,
-    employeeId:'',
-    contact:'',
-    email:'',
-    gender:'',
-    jobtitle:'',
-    dob:'',
-    doj:'',
-    salary:'',
-    department:'',
-    street:'',
-    city:'',
-    state:'',
-    zip:'',
+
+  employeeObj: any = {
+    id: 1,
+    employeeId: '',
+    contact: '',
+    email: '',
+    gender: '',
+    jobtitle: '',
+    dob: '',
+    doj: '',
+    salary: '',
+    department: '',
+    street: '',
+    city: '',
+    state: '',
+    zip: '',
   }
 
-  employeeArray: any[]=[];
-  currentId: number =0;
+  employeeArray: any[] = [];
+  currentId: number = 0;
 
 
-  constructor(private activatedRoute: ActivatedRoute, public router: Router, ) {
-    this.activatedRoute.params.subscribe(res=>{
-      debugger;
-      if(res['id']){
+  constructor(private activatedRoute: ActivatedRoute, public router: Router,) {
+    this.activatedRoute.params.subscribe((res:any) => {
+      if (res['id']) {
         this.currentId = res['id'];
       }
     })
   }
   ngOnInit(): void {
     const employeeData = localStorage.getItem('employees')
-    if(employeeData !== null){
+    if (employeeData !== null) {
       this.employeeArray = JSON.parse(employeeData);
-      debugger;
-      if(this.currentId !==0){
-      const currentRecord = this.employeeArray.find(m=> m.id ==this.currentId);
-      if(currentRecord != undefined){
-      this.employeeObj = currentRecord;
-     }
+      if (this.currentId !== 0) {
+        const currentRecord = this.employeeArray.find(m => m.id == this.currentId);
+        if (currentRecord != undefined) {
+          this.employeeObj = currentRecord;
+        }
+      }
     }
-   }
   }
 
-
   registerForm = new FormGroup({
-    employeeId: new FormControl("", [Validators.required,this.validateEmployeeId]),
+    employeeId: new FormControl("", [Validators.required, this.validateEmployeeId]),
     contact: new FormControl("", [Validators.required, Validators.pattern("[0-9]*"),
     Validators.minLength(10), Validators.maxLength(10)]),
     email: new FormControl("", [Validators.required, Validators.email]),
     gender: new FormControl("", [Validators.required]),
-    jobtitle: new FormControl("", [Validators.required,Validators.maxLength(35)]),
+    jobtitle: new FormControl("", [Validators.required, Validators.maxLength(35)]),
     dob: new FormControl("", [Validators.required, this.validateDOB]),
     doj: new FormControl("", [Validators.required, this.validateDateNotInFuture]),
     salary: new FormControl("", [Validators.required, Validators.pattern(/^\d*(\.\d+)?$/), this.salaryRangeValidator]),
@@ -128,37 +125,31 @@ export class RegisterEmployeeComponent implements OnInit {
 
   })
 
-
-  /*registerSubmitted() {
-
-    if (this.registerForm.valid) {
-      const employeeData = this.registerForm.value;
-      const employees = JSON.parse(localStorage.getItem('employees') || '[]');
-      employees.push(employeeData);
-      localStorage.setItem('employees', JSON.stringify(employees));
-
-      //reset the form after submission
-      this.registerForm.reset();
-
-      console.log("Employee data saved to local storage:", employeeData);
-      this.router.navigate(['/employee-details'])
-    } else {
-      console.log("Form is invalid. Cannot submit.");
-    }
-  }*/
   submit() {
+    debugger;
     const employeeData = localStorage.getItem('employees')
-    if(employeeData == null){
+    if (employeeData == null) {//if no record in local storage
       this.employeeArray.push(this.employeeObj);
       localStorage.setItem('employees', JSON.stringify(this.employeeArray));
-    }else{//if data present
+    } else {//if data present
       const parseData = JSON.parse(employeeData);
-      this.employeeObj.id = parseData.length +1;
+      this.employeeObj.id = parseData.length + 1;
       this.employeeArray.push(this.employeeObj);
       localStorage.setItem('employees', JSON.stringify(this.employeeArray));
       this.router.navigate(['/employee-details'])
     }
-   }
+  }
+
+  updateData() {
+    const currentRecord = this.employeeArray.find(m => m.id == this.currentId);
+    if (currentRecord != undefined) {
+      const index = this.employeeArray.findIndex(m => m.id == this.currentId);
+      this.employeeArray.splice(index, 1);
+      this.employeeArray.push(this.employeeObj);
+      localStorage.setItem('employees', JSON.stringify(this.employeeArray));
+      this.router.navigate(['/employee-details'])
+    }
+  }
 
   get EmployeeId(): FormControl {
     return this.registerForm.get("employeeId") as FormControl;
