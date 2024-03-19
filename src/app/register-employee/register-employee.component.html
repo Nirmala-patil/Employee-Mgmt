@@ -165,9 +165,28 @@
             <div class="col-4 offset-4 mt-2">
                 <div class="d-grid">
                     <button type="submit" [disabled]="registerForm.invalid" *ngIf="this.currentId == 0" class="btn btn-primary" (click)="submit()">Submit</button>
-                    <button type="updateData" *ngIf="this.currentId !== 0 " class="btn btn-primary" (click)="updateData()">Update</button>
+                    <button type="updateData" *ngIf="this.currentId !== 0 " class="btn btn-primary"  (click)="openConfirmationModal()">Update</button>
                 </div>
             </div>
         </div>
     </form>
+</div>
+
+<!-- Update Confirmation Modal -->
+<div class="modal fade" id="updateConfirmationModal" tabindex="-1" aria-labelledby="updateConfirmationModalLabel" aria-hidden="true" [class.show]="confirmationModalVisible">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateConfirmationModalLabel">Confirm Update</h5>
+                <button type="button" class="btn-close" aria-label="Close" (click)="closeConfirmationModal()"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to update this data?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="closeConfirmationModal()">Cancel</button>
+                <button type="button" class="btn btn-primary" (click)="updateData()">Update</button>
+            </div>
+        </div>
+    </div>
 </div>

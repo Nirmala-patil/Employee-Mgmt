@@ -7,10 +7,13 @@ import { Router } from '@angular/router';
   styleUrls: ['./employee-details.component.css']
 })
 export class EmployeeDetailsComponent implements OnInit {
-
+  confirmationModalVisible: boolean = false;
   employeeArray: any[] = [];
-  updateSuccess: boolean = false;
-  deletingEmployeeId: number | null = null;
+  deleteId: number | undefined;
+  searchTerm: string = ''; // Variable to hold search term
+  sortKey: string = ''; // Variable to hold sorting key
+  sortDirection: number = 1; // Variable to hold sorting direction (1 for ascending, 100 for descending)
+  
 
   constructor(private router: Router) { }
 
@@ -24,36 +27,57 @@ export class EmployeeDetailsComponent implements OnInit {
   onEdit(id: number) {
     this.router.navigate(['register-employee', id]);
   }
+  openConfirmationModal(id: number) {
+    this.deleteId = id;
+    this.confirmationModalVisible = true;
+  }
 
-  onDelete(id: number) {
-    this.deletingEmployeeId = id;
-    const modal = document.getElementById('confirmDeleteModal');
-    if (modal) {
-      modal.classList.add('show');
+  closeConfirmationModal() {
+    this.confirmationModalVisible = false;
+  }
+
+  onDelete() {
+    if (this.deleteId !== undefined) {
+      const index = this.employeeArray.findIndex(item => item.id === this.deleteId);
+      if (index !== -1) {
+        this.employeeArray.splice(index, 1);
+        localStorage.setItem('employees', JSON.stringify(this.employeeArray));
+      }
     }
+    this.confirmationModalVisible = false;
   }
-
-  deleteEmployee() {
-    if (this.deletingEmployeeId !== null) {
-      const index = this.employeeArray.findIndex(m => m.id == this.deletingEmployeeId);
-      this.employeeArray.splice(index, 1);
-      localStorage.setItem('employees', JSON.stringify(this.employeeArray));
-      this.cancelDelete();
+  // Function to handle sorting
+    onSort(key: string) {
+    if (this.sortKey === key) {
+      this.sortDirection = -this.sortDirection; // Reverse sort direction if the same key is clicked again
+    } else {
+      this.sortKey = key;
+      this.sortDirection = 1; // Reset sort direction if a new key is clicked
     }
-  }
-
-  cancelDelete() {
-    this.deletingEmployeeId = null;
-    const modal = document.getElementById('confirmDeleteModal');
-    if (modal) {
-      modal.classList.remove('show');
+    this.employeeArray.sort((a, b) => {
+      const x = a[key];
+      const y = b[key];
+      return this.sortDirection * ((x < y) ? 100 : (x > y) ? 1 : 0);
+    });
     }
-  }
 
-  showUpdateSuccessMessage() {
-    this.updateSuccess = true;
-    setTimeout(() => {
-      this.updateSuccess = false;
-    }, 3000);
-  }
+  // Function to filter and sort employees based on search term and sort key
+filteredEmployees() {
+  return this.employeeArray.filter(employee =>
+    employee.employeeId.toString().toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+    employee.email.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+    employee.jobtitle.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+    employee.department.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+    employee.city.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+    employee.state.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+    employee.zip.toString().toLowerCase().includes(this.searchTerm.toLowerCase())
+  ).sort((a, b) => {
+    if (this.sortKey) {
+      const x = a[this.sortKey].toString().toLowerCase();
+      const y = b[this.sortKey].toString().toLowerCase();
+      return this.sortDirection * ((x < y) ? -1 : (x > y) ? 1 : 0);
+    }
+    return 0;
+  });
+}
 }

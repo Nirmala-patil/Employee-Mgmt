@@ -9,7 +9,8 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['./register-employee.component.css']
 })
 export class RegisterEmployeeComponent implements OnInit {
-
+  
+  confirmationModalVisible: boolean = false;
   // Custom validator for employeeId
   validateEmployeeId(control: AbstractControl): ValidationErrors | null {
     if (!/^[a-zA-Z0-9]{6}$/.test(control.value)) {
@@ -149,8 +150,24 @@ export class RegisterEmployeeComponent implements OnInit {
       localStorage.setItem('employees', JSON.stringify(this.employeeArray));
       this.router.navigate(['/employee-details'])
     }
+  
+  this.confirmationModalVisible = false;
+
+    // Redirect to desired route
+    this.router.navigate(['/employee-details']);
   }
 
+  // Function to open the confirmation modal
+  openConfirmationModal() {
+    this.confirmationModalVisible = true;
+  }
+
+  // Function to close the confirmation modal
+  closeConfirmationModal() {
+    this.confirmationModalVisible = false;
+  }
+
+ 
   get EmployeeId(): FormControl {
     return this.registerForm.get("employeeId") as FormControl;
   }
@@ -190,7 +207,7 @@ export class RegisterEmployeeComponent implements OnInit {
   get Zip(): FormControl {
     return this.registerForm.get("zip") as FormControl;
   }
-
+  
 }
 
 
