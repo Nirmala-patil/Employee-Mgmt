@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { EmployeeDetailsComponent } from '../employee-details/employee-details.component';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MsalBroadcastService, MsalService } from '@azure/msal-angular';
+import { EventMessage, EventType, InteractionStatus } from '@azure/msal-browser';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-register-employee',
@@ -9,7 +12,10 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['./register-employee.component.css']
 })
 export class RegisterEmployeeComponent implements OnInit {
-  
+  loginDisplay = false;
+  //public loginRequest = {
+    //scopes: ['user.read']};
+
   confirmationModalVisible: boolean = false;
   // Custom validator for employeeId
   validateEmployeeId(control: AbstractControl): ValidationErrors | null {
@@ -88,12 +94,16 @@ export class RegisterEmployeeComponent implements OnInit {
   currentId: number = 0;
 
 
-  constructor(private activatedRoute: ActivatedRoute, public router: Router,) {
+  constructor(private activatedRoute: ActivatedRoute, 
+    public router: Router,private authService: MsalService, 
+    private msalBroadcastService: MsalBroadcastService){
     this.activatedRoute.params.subscribe((res:any) => {
       if (res['id']) {
         this.currentId = res['id'];
       }
     })
+    
+
   }
   ngOnInit(): void {
     const employeeData = localStorage.getItem('employees')
@@ -106,7 +116,26 @@ export class RegisterEmployeeComponent implements OnInit {
         }
       }
     }
-  }
+    this.msalBroadcastService.msalSubject$
+      .pipe(
+        filter((msg: EventMessage) => msg.eventType === EventType.LOGIN_SUCCESS),
+      )
+      .subscribe((result: EventMessage) => {
+        console.log(result);
+      });
+
+    this.msalBroadcastService.inProgress$
+      .pipe(
+        filter((status: InteractionStatus) => status === InteractionStatus.None)
+      )
+      .subscribe(() => {
+        this.setLoginDisplay();
+      })
+    }
+    setLoginDisplay() {
+      this.loginDisplay = this.authService.instance.getAllAccounts().length > 0;
+    }
+  
 
   registerForm = new FormGroup({
     employeeId: new FormControl("", [Validators.required, this.validateEmployeeId]),
@@ -138,8 +167,18 @@ export class RegisterEmployeeComponent implements OnInit {
       this.employeeArray.push(this.employeeObj);
       localStorage.setItem('employees', JSON.stringify(this.employeeArray));
       this.router.navigate(['/employee-details'])
+    }}
+   /* login() {
+      setTimeout(() => {
+        this.authService.loginRedirect(this.loginRequest);
+      }, 500);
+      //this.authService.loginRedirect(this.loginRequest);
+      console.log("test");
     }
-  }
+
+    logout() {
+      this.authService.logout();
+    }*/
 
   updateData() {
     const currentRecord = this.employeeArray.find(m => m.id == this.currentId);
@@ -209,6 +248,3 @@ export class RegisterEmployeeComponent implements OnInit {
   }
   
 }
-
-
-
